@@ -6,54 +6,98 @@ import Goal from '../models/Goal';
 // @desc     Get all goals
 // @access   Private
 
-const getGoals = (req: Request, res: Response, next: NextFunction) => {
-  return Goal.find()
-    .then(goals => res.status(200).json({ goals }))
-    .catch(error => res.status(500).json({ error }));
+const getGoals = async (req: Request, res: Response, next: NextFunction) => {
+  const goals = await Goal.find({ user: req.user.id });
+  res.status(200).json({
+    count: goals.length,
+    goals,
+  });
 };
 
 // @route    POST api/goals
 // @desc     Set goal
 // @access   Private
 
-const setGoal = (req: Request, res: Response, next: NextFunction) => {
+const setGoal = async (req: Request, res: Response, next: NextFunction) => {
   const { text } = req.body;
   if (!text) {
-    throw new Error('Please add a text field');
+    const error = new Error('Please add a text field');
+    console.error(error);
+    return res.status(400).json({ message: error.message });
   }
 
-  const goal = new Goal({
+  const goal = await Goal.create({
     _id: new mongoose.Types.ObjectId(),
     text,
+    user: req.user.id,
   });
-  return goal
-    .save()
-    .then(goal => res.status(201).json({ goal }))
-    .catch(error => res.status(500).json({ error }));
+  res.status(200).json(goal);
 };
 
 // @route    PUT api/goals/:id
 // @desc     Update goal
 // @access   Private
 
-const updateGoal = (req: Request, res: Response, next: NextFunction) => {
-  const goalId = req.params.id;
+const updateGoal = async (req: Request, res: Response, next: NextFunction) => {
+  const goal = await Goal.findById(req.params.id);
 
-  return Goal.findByIdAndUpdate(goalId, req.body, { new: true })
-    .then(updatedGoal => (updatedGoal ? res.status(200).json(updatedGoal) : res.status(404).json({ message: 'Not found' })))
-    .catch(error => res.status(500).json({ error }));
+  if (!goal) {
+    const error = new Error('Goal not found');
+    console.error(error);
+    return res.status(400).json({ message: error.message });
+  }
+
+  // Check for user
+  if (!req.user) {
+    const error = new Error('User not found');
+    console.error(error);
+    return res.status(400).json({ message: error.message });
+  }
+
+  // Make sure the logged in user matches the goal user
+  if (goal.user.toString() !== req.user.id) {
+    const error = new Error('User not authorized');
+    console.error(error);
+    return res.status(401).json({ message: error.message });
+  }
+
+  const updatedGoal = await Goal.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
+
+  res.status(200).json(updatedGoal);
 };
 
 // @route    DELETE api/goals/:id
 // @desc     Delete goal
 // @access   Private
 
-const deleteGoal = (req: Request, res: Response, next: NextFunction) => {
-  const goalId = req.params.id;
+const deleteGoal = async (req: Request, res: Response, next: NextFunction) => {
+  const goal = await Goal.findById(req.params.id);
 
-  return Goal.findByIdAndDelete(goalId)
-    .then(goal => (goal ? res.status(201).json({ id: req.params.id }) : res.status(404).json({ message: 'Not found' })))
-    .catch(error => res.status(500).json({ error }));
+  if (!goal) {
+    const error = new Error('Goal not found');
+    console.error(error);
+    return res.status(400).json({ message: error.message });
+  }
+
+  // Check for user
+  if (!req.user) {
+    const error = new Error('User not found');
+    console.error(error);
+    return res.status(401).json({ message: error.message });
+  }
+
+  // Make sure the logged in user matches the goal user
+  if (goal.user.toString() !== req.user.id) {
+    const error = new Error('User not authorized');
+    console.error(error);
+    return res.status(401).json({ message: error.message });
+  }
+
+  await goal.remove();
+
+  res.status(200).json({ id: req.params.id });
 };
 
 export default { getGoals, setGoal, updateGoal, deleteGoal };

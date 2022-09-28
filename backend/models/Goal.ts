@@ -1,13 +1,9 @@
-import mongoose, { Document, Schema } from 'mongoose';
-
-export interface IGoal {
-  name: string;
-}
-
-export interface IGoalModel extends IGoal, Document {}
+import mongoose, { Schema } from 'mongoose';
+import IGoal from '../interfaces/Goal';
 
 const GoalSchema: Schema = new Schema(
   {
+    user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
     text: { type: String, required: [true, 'Please add a text'] },
   },
   {
@@ -15,4 +11,4 @@ const GoalSchema: Schema = new Schema(
   }
 );
 
-export default mongoose.model<IGoalModel>('Goal', GoalSchema);
+export default mongoose.model<IGoal>('Goal', GoalSchema);

@@ -1,7 +1,7 @@
 import express from 'express';
-import * as dotenv from 'dotenv';
+import dotenv from 'dotenv';
 import goalRoutes from './routes/Goal';
-import errorHandler from './middleware/errorHandler';
+import userRoutes from './routes/User';
 import mongoose from 'mongoose';
 dotenv.config();
 
@@ -25,8 +25,13 @@ const startServer = () => {
   app.use(express.urlencoded({ extended: false }));
 
   app.use('/api/goals', goalRoutes);
+  app.use('/api/users', userRoutes);
 
-  app.use(errorHandler);
+  app.use((req, res, next) => {
+    const error = new Error('Not found');
+    console.error(error);
+    return res.status(404).json({ message: error.message });
+  });
 
   app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 };
