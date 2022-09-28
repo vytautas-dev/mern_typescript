@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+fieldset {
+  border: none;
+}
+
 body {
   font-family: 'Poppins', sans-serif;
   height: 100vh;
@@ -166,7 +170,7 @@ h3 {
 }
 
 .btn:hover {
-  transform: scale(0.98);
+  opacity: 0.5;
 }
 
 .loadingSpinnerContainer {
