@@ -2,11 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import User from '../models/User';
 import dotenv from 'dotenv';
+import { IGetUserAuthInfoRequest } from '../interfaces/User';
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || '';
 
-const auth = async (req: Request, res: Response, next: NextFunction) => {
+const auth = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
   let token = '';
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {

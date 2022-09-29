@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import mongoose from 'mongoose';
 import User from '../models/User';
+import { IGetUserAuthInfoRequest } from '../interfaces/User';
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET || '';
@@ -83,14 +84,8 @@ const loginUser = async (req: Request, res: Response, next: NextFunction) => {
 // @desc     Get user data
 // @access   Private
 
-const getMe = async (req: Request, res: Response, next: NextFunction) => {
-  const user = await User.findById(req.user.id);
-
-  res.status(200).json({
-    id: user!._id,
-    name: user!.name,
-    email: user!.email,
-  });
+const getMe = async (req: IGetUserAuthInfoRequest, res: Response, next: NextFunction) => {
+  res.status(200).json(req.user);
 };
 
 // Generate JWT
