@@ -2,7 +2,8 @@ import { FaSignInAlt, FaSignOutAlt, FaUser } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch, TypedUseSelectorHook } from 'react-redux';
 import { AppDispatch, RootState } from '../app/store';
-import { logout, reset } from '../features/auth/authSlice';
+import { logout, resetAuth } from '../features/auth/authSlice';
+import { resetGoals } from '../features/goals/goalSlice';
 
 const useAppDispatch: () => AppDispatch = useDispatch;
 
@@ -14,7 +15,8 @@ function Header() {
 
   const onLogout = () => {
     dispatch(logout());
-    dispatch(reset());
+    dispatch(resetAuth());
+    dispatch(resetGoals());
     navigate('/');
   };
 

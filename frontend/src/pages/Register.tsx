@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { IRegisterFormData } from '../interfaces/Form';
 import { FaUser } from 'react-icons/fa';
-import { register, reset } from '../features/auth/authSlice';
+import { register, resetAuth } from '../features/auth/authSlice';
 import { AppDispatch, RootState } from '../app/store';
 import Spinner from '../components/Spinner';
 
@@ -34,7 +34,7 @@ function Register() {
       console.log(user);
       navigate('/');
     }
-    dispatch(reset());
+    dispatch(resetAuth());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const onChange = (e: React.FormEvent<HTMLInputElement>) => {

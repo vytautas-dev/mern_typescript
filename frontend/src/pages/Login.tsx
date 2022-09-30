@@ -4,7 +4,7 @@ import { FaSignInAlt } from 'react-icons/fa';
 import { AppDispatch, RootState } from '../app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { login, reset } from '../features/auth/authSlice';
+import { login, resetAuth } from '../features/auth/authSlice';
 import Spinner from '../components/Spinner';
 import { toast } from 'react-toastify';
 
@@ -33,7 +33,7 @@ function Login() {
       navigate('/');
     }
 
-    dispatch(reset());
+    dispatch(resetAuth());
   }, [user, isError, isSuccess, message, navigate, dispatch]);
 
   const onChange = (e: React.FormEvent<HTMLInputElement>) => {

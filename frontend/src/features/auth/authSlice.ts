@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { IAuth } from '../../interfaces/Auth';
 import { ILoginFormData, IRegisterFormData } from '../../interfaces/Form';
+import { ThunkAPI } from '../../interfaces/Thunk';
 import IUser from '../../interfaces/User';
 import authService from './authService';
 
@@ -17,7 +18,7 @@ const initialState: IAuth = {
 };
 
 // Register user
-export const register = createAsyncThunk('auth/register', async (user: IRegisterFormData, thunkAPI) => {
+export const register = createAsyncThunk('auth/register', async (user: IRegisterFormData, thunkAPI: ThunkAPI) => {
   try {
     return await authService.register(user);
   } catch (error: any) {
@@ -27,7 +28,7 @@ export const register = createAsyncThunk('auth/register', async (user: IRegister
 });
 
 //Login user
-export const login = createAsyncThunk('auth/login', async (user: ILoginFormData, thunkAPI) => {
+export const login = createAsyncThunk('auth/login', async (user: ILoginFormData, thunkAPI: ThunkAPI) => {
   try {
     return await authService.login(user);
   } catch (error: any) {
@@ -44,7 +45,7 @@ export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    reset: state => {
+    resetAuth: state => {
       state.isLoading = false;
       state.isSuccess = false;
       state.isError = false;
@@ -90,5 +91,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { reset } = authSlice.actions;
+export const { resetAuth } = authSlice.actions;
 export default authSlice.reducer;
